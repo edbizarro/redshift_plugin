@@ -254,7 +254,13 @@ class S3ToRedshiftOperator(BaseOperator):
                 if i != (len(self.primary_key) - 1):
                     where_pk += " AND "
         else:
-            where_pk = '"{rs_schema}"."{rs_table}"."{rs_pk}" = "{rs_schema}"."{rs_table}{rs_suffix}"."{rs_pk}"'
+            where_pk = '"{rs_schema}"."{rs_table}"."{rs_pk}" = "{rs_schema}"."{rs_table}{rs_suffix}"."{rs_pk}"'.format(
+                rs_schema=self.redshift_schema,
+                rs_table=self.table,
+                rs_pk=self.primary_key,
+                rs_suffix=self.temp_suffix,
+                rs_ik=self.incremental_key,
+            )
 
         delete_sql = """
             DELETE FROM "{rs_schema}"."{rs_table}"
